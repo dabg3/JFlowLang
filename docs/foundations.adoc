@@ -1,0 +1,83 @@
+= Fluent API as Formal Language
+
+Definition of a Fluent API for workflow generation.
+
+== Introduction
+
+The purpose is to define a Java type which allows valid call chains only,
+invalid sequences must not compile. 
+
+.Example of a valid call chain 
+[source, java]
+----
+WorkflowBuilder
+    .boostrap()
+    .chain()
+    .chain()
+    /* ...more chain() */
+    .loopWhile()
+        .chain()
+        /* ...more chain() */
+    .loopEnd()
+    .chain()
+    .build()
+----
+
+.Examples of invalid chains
+[source, java]
+----
+WorkflowBuilder
+    .boostrap()
+    .chain()
+    .loopWhile() 
+        //a loop cannot be empty
+    .loopEnd() 
+    .build()
+
+WorkflowBuilder
+    .boostrap()
+    .chain()
+    .loopWhile()
+    .chain()
+    .build() // missing loop endmark loopEnd() 
+
+WorkflowBuilder
+    .bootstrap()
+    .build() //empty workflow is not allowed
+----
+
+A subset of the actual language is choosen to simplify implementation,
+follows a brief explanation of each method, parameters are excluded since 
+the focus is on getting right the call chain.
+
+bootstrap():: provide a context shared by all activities in the workflow.
+chain():: add an activity to the workflow (unit of work)
+loopWhile():: repeat a sequence of activity until condition is false
+loopEnd():: mark the end of a loop
+build():: instantiate the worflow
+
+== Theory
+
+Fluent APIs are closely related to the theory of formal languages and automata, 
+this work is based on the paper https://doi.org/10.4230/LIPIcs.ECOOP.2016.10[
+Formal Language Recognition with the Java Type Checker].
+
+[quote]
+If the DSL specification is that of a deterministic context-free language, 
+then a fluent API exists for the language...
+
+*TODO* introduction to deterministic context-free grammar
+
+*TODO* relate DCFG to jDPDA
+
+----------draft-notes-------------
+
+.[.underline]#Definition#
+A language is called a deterministic context-free language if a deterministic pushdown
+automaton (DPDA) recognizes it.
+
+
+
+
+
+
